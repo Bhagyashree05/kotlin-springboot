@@ -14,7 +14,7 @@ class GreetingsController(val greetingsService: GreetingsService) {
     private val logger = KotlinLogging.logger {}
 
     @GetMapping("/{name}")
-    fun requestGreetings(@PathVariable("name") name: String): String{
+    fun requestGreetings(@PathVariable("name") name: String): String {
         logger.info { "Name is: $name" }
         return greetingsService.retrieveGreeting(name)
     }
