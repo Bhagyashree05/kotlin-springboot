@@ -8,12 +8,12 @@ import jakarta.persistence.GenerationType
 
 
 @Entity
-@Table(name="courses")
+@Table(name = "courses")
 data class Course(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id : Int?,
-    val name : String,
-    val category : String
+    val id: Int? = null,
+    val name: String? = null,
+    val category: String? = null
 ) {
 }
