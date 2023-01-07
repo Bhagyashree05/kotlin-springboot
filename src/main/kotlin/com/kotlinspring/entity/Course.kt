@@ -13,7 +13,7 @@ data class Course(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int? = null,
-    val name: String? = null,
-    val category: String? = null
+    var name: String? = null,
+    var category: String? = null
 ) {
 }
