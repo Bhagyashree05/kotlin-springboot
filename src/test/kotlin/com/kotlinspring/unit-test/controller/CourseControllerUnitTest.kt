@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.test.web.reactive.server.expectBody
 
 @WebMvcTest(controllers = [CourseController::class])
 @AutoConfigureWebTestClient
@@ -95,7 +94,7 @@ class CourseControllerUnitTest {
 
     @Test
     fun retrieveAllCourses() {
-        every { courseService.retrieveAllCourse() }.returnsMany(
+        every { courseService.retrieveAllCourse(any()) }.returnsMany(
             listOf(
                 courseDTO(id = 1),
                 courseDTO(id = 2, name = "Wiremock for Java Developers")

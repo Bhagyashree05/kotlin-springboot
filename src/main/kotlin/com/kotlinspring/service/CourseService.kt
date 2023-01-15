@@ -28,17 +28,25 @@ class CourseService(val courseRepository: CourseRepository) {
 
     }
 
-    fun retrieveAllCourse(): List<CourseDTO> {
-        return courseRepository.findAll()
+    fun retrieveAllCourse(courseName: String?): List<CourseDTO> {
+
+        // if courseName is not null findCoursesByName() is executed
+        // if courseName is null findAll() is executed
+        val courses = courseName?.let {
+            courseRepository.findCoursesByName(courseName)
+        } ?: courseRepository.findAll()
+
+        return courses
             .map {
                 CourseDTO(it.id, it.name!!, it.category!!)
             }
+
     }
 
     fun updateCourse(courseId: Int, courseDTO: CourseDTO): CourseDTO {
         val existingCourse = courseRepository.findById(courseId)
 
-        return if(existingCourse.isPresent){
+        return if (existingCourse.isPresent) {
             existingCourse.get()
                 .let {
                     it.name = courseDTO.name
@@ -46,7 +54,7 @@ class CourseService(val courseRepository: CourseRepository) {
                     courseRepository.save(it)
                     CourseDTO(it.id, it.name!!, it.category!!)
                 }
-        }else {
+        } else {
             throw CourseNotFoundException("No course found for the passed in Id: $courseId")
         }
 
@@ -55,12 +63,12 @@ class CourseService(val courseRepository: CourseRepository) {
     fun deleteCourse(courseId: Int) {
         val existingCourse = courseRepository.findById(courseId)
 
-        return if(existingCourse.isPresent){
+        return if (existingCourse.isPresent) {
             existingCourse.get()
                 .let {
                     courseRepository.deleteById(courseId)
                 }
-        }else {
+        } else {
             throw CourseNotFoundException("No course found for the passed in Id: $courseId")
         }
 
