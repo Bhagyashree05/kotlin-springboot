@@ -1,0 +1,75 @@
+Greeting Controller:
+====================
+curl --location --request GET 'http://localhost:8080/v1/greetings/John'
+
+===================
+Course Controller: |
+===================
+
+H2 Database Console:
+==============
+http://localhost:8080/h2-console
+
+
+CREATE COURSE:
+==============
+curl --location --request POST 'http://localhost:8080/v1/courses' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+   "id":null,
+   "name":"Build Restful APIs using Kotlin and SpringBoot",
+   "category":"Development"
+}'
+
+
+curl --location --request POST 'http://localhost:8080/v1/courses' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+   "id":null,
+   "name":"Build Reactive Microservices using Spring WebFlux/SpringBoot",
+   "category":"Development"
+}'
+
+GET COURSES:
+==============
+curl -i http://localhost:8080/v1/courses
+
+UPDATE COURSE:
+==============
+curl --location --request PUT 'http://localhost:8080/v1/courses/1' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+   "id":null,
+   "name":"Build Restful APIs using Kotlin & SpringBoot2",
+   "category":"Development"
+}'
+
+
+DELETE COURSE:
+==============
+curl -i -X DELETE http://localhost:8080/v1/courses/1
+
+
+=======================
+Instructor Controller: |
+=======================
+CREATE INSTRUCTOR:
+==================
+curl --location --request POST 'http://localhost:8080/v1/instructors' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+   "id":null,
+   "name":"John Smith"
+}'
+
+
+CREATE COURSE WITH INSTRUCTOR:
+==================
+curl --location --request POST 'http://localhost:8080/v1/courses' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+   "id":null,
+   "name":"Build Restful APIs using Kotlin and SpringBoot",
+   "category":"Development",
+   "instructorId": 1
+}'
