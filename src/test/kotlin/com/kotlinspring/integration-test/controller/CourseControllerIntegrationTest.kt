@@ -1,9 +1,12 @@
 package com.kotlinspring.`integration-test`.controller
 
+import com.kotlinspring.`integration-test`.util.PostgreSQLContainerInitializer
 import com.kotlinspring.`integration-test`.util.courseEntityList
+import com.kotlinspring.`integration-test`.util.instructorEntity
 import com.kotlinspring.dto.CourseDTO
 import com.kotlinspring.entity.Course
 import com.kotlinspring.repository.CourseRepository
+import com.kotlinspring.repository.InstructorRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -12,13 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.UriComponentsBuilder
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.utility.DockerImageName
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-class CourseControllerIntegrationTest {
+class CourseControllerIntegrationTest : PostgreSQLContainerInitializer() {
 
     @Autowired
     lateinit var webTestClient: WebTestClient
@@ -26,17 +35,29 @@ class CourseControllerIntegrationTest {
     @Autowired
     lateinit var courseRepository: CourseRepository
 
+    @Autowired
+    lateinit var instructorRepository: InstructorRepository
+
     @BeforeEach
     fun setup() {
         courseRepository.deleteAll()
-        val courses = courseEntityList()
+        instructorRepository.deleteAll()
+
+        val instructor = instructorEntity()
+        instructorRepository.save(instructor)
+
+        val courses = courseEntityList(instructor)
         courseRepository.saveAll(courses)
     }
 
     @Test
     fun addCourse() {
 
-        val courseDTO = CourseDTO(null, "Build Restful APIs using Kotlin and SpringBoot", "DEVELOPMENT")
+        val instructor = instructorRepository.findAll().first()
+
+        val courseDTO = CourseDTO(null,
+            "Build Restful APIs using Kotlin and SpringBoot",
+            "DEVELOPMENT", instructor.id)
 
         val savedCourseDTO = webTestClient
             .post()
@@ -89,16 +110,19 @@ class CourseControllerIntegrationTest {
     @Test
     fun updateCourse() {
 
+        val instructor = instructorRepository.findAll().first()
+
         val course = Course(
             null,
-            "Build RestFul APis using SpringBoot and Kotlin", "Development"
-        )
+            "Build RestFul APis using SpringBoot and Kotlin",
+            "Development", instructor)
         courseRepository.save(course)
 
         val updateCourseDTO = CourseDTO(
             null,
-            "Build RestFul APis using SpringBoot and Kotlin1", "Development"
-        )
+            "Build RestFul APis using SpringBoot and Kotlin1",
+            "Development",
+            course.instructor!!.id)
 
         val updatedCourse = webTestClient
             .put()
@@ -117,10 +141,13 @@ class CourseControllerIntegrationTest {
     @Test
     fun deleteCourse() {
 
+        val instructor = instructorRepository.findAll().first()
+
         val course = Course(
             null,
-            "Build RestFul APis using SpringBoot and Kotlin", "Development"
-        )
+            "Build RestFul APis using SpringBoot and Kotlin",
+            "Development",
+            instructor)
         courseRepository.save(course)
 
         val updatedCourse = webTestClient
