@@ -43,20 +43,15 @@
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.2-api</artifactId>
-			<version>1.0.0.Beta1</version>
 		</dependency>
 
 		<dependency>
@@ -79,6 +74,27 @@
 			<artifactId>springmockk</artifactId>
 			<version>3.0.1</version>
 		</dependency>
+
+		<!-- test containers-->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>1.17.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.17.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>1.17.6</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>io.github.microutils</groupId>
 			<artifactId>kotlin-logging-jvm</artifactId>
@@ -98,13 +114,19 @@
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
 				<configuration>
-					<args>
-						<arg>-Xjsr305=strict</arg>
-					</args>
 					<compilerPlugins>
 						<plugin>spring</plugin>
+						<plugin>all-open</plugin>
 						<plugin>jpa</plugin>
+						<plugin>no-arg</plugin>
 					</compilerPlugins>
+					<pluginOptions>
+						<option>no-arg:annotation=com.my.Annotation</option>
+						<!-- Call instance initializers in the synthetic constructor -->
+						<!-- <option>no-arg:invokeInitializers=true</option> -->
+						<option>all-open:annotation=com.your.Annotation</option>
+						<option>all-open:annotation=com.their.AnotherAnnotation</option>
+					</pluginOptions>
 				</configuration>
 				<dependencies>
 					<dependency>
